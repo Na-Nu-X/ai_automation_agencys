@@ -25,10 +25,11 @@ class ApiTests(TestCase):
     def test_categories_include_counts(self):
         data = self.client.get("/api/categories/").json()
         self.assertEqual(len(data), 6)
+        self.assertEqual([c["display_order"] for c in data], [1, 2, 3, 4, 5, 6])
         self.assertEqual(sum(c["solution_count"] for c in data), 10)
 
     def test_solution_filters(self):
-        self.assertEqual(len(self.client.get("/api/solutions/?featured=true").json()), 5)
+        self.assertEqual(len(self.client.get("/api/solutions/?featured=true").json()), 6)
         by_cat = self.client.get("/api/solutions/?category=firemna-znalostna-baza-rag").json()
         self.assertEqual(len(by_cat), 2)
         self.assertTrue(self.client.get("/api/solutions/?search=n8n").json())

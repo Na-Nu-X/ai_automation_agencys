@@ -31,7 +31,9 @@ class SolutionCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = []
 
     def get_queryset(self):
-        return SolutionCategory.objects.annotate(solution_count=Count("solutions"))
+        return SolutionCategory.objects.annotate(solution_count=Count("solutions")).order_by(
+            "display_order", "name"
+        )
 
 
 class AutomationSolutionViewSet(viewsets.ReadOnlyModelViewSet):

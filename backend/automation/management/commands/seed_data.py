@@ -207,7 +207,7 @@ SOLUTIONS = [
     {
         "category": "Integrácie systémov (n8n / Make / Custom API)",
         "name": "Synchronizácia objednávok medzi e-shopom, skladom a ERP",
-        "is_featured": False,
+        "is_featured": True,
         "short_description": "Robustné prepojenie e-shopu, skladového systému, dopravcov a ERP s automatickým spracovaním objednávok, stavov a faktúr.",
         "problem_statement": "Objednávky sa medzi systémami prenášajú ručne alebo cez nespoľahlivé exporty. Vznikajú duplicity, chyby v zásobách a oneskorené expedície.",
         "detailed_description": "Navrhneme a nasadíme integračnú vrstvu na n8n alebo vlastnom API s frontami, opakovaním pri chybách, monitoringom a upozorneniami. Každá transakcia je dohľadateľná a systém zvládne aj sezónne špičky.",
