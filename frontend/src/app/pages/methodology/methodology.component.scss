@@ -1,0 +1,339 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.principles {
+  grid-template-columns: 1fr;
+
+  @include up(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include up(lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  &__item {
+    @include card;
+    display: grid;
+    gap: $space-3;
+    align-content: start;
+
+    app-icon {
+      width: 40px;
+      height: 40px;
+      padding: 9px;
+      border-radius: $radius-md;
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+      margin-bottom: $space-2;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+    }
+  }
+}
+
+.timeline {
+  list-style: none;
+  display: grid;
+  gap: $space-5;
+  max-width: 900px;
+
+  &__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: $space-4;
+
+    @include up(md) {
+      grid-template-columns: 64px 1fr;
+      gap: $space-6;
+    }
+
+    &:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 23.5px;
+      top: 48px;
+      bottom: -$space-5;
+      width: 1px;
+      background: var(--color-border-strong);
+
+      @include up(md) {
+        left: 31.5px;
+        top: 64px;
+      }
+    }
+  }
+
+  &__marker {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--color-border-strong);
+    border-radius: $radius-md;
+    background: var(--color-surface);
+    color: var(--color-accent);
+    font-weight: 600;
+
+    @include up(md) {
+      width: 64px;
+      height: 64px;
+      font-size: 1.25rem;
+    }
+  }
+
+  &__card {
+    @include card;
+    display: grid;
+    gap: $space-3;
+
+    > p {
+      color: var(--color-text-secondary);
+    }
+  }
+
+  &__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+  }
+
+  &__deliverables {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2 $space-5;
+    padding-top: $space-3;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.875rem;
+
+    li {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    app-icon {
+      width: 16px;
+      height: 16px;
+      color: var(--color-success);
+    }
+  }
+}
+
+.security {
+  position: relative;
+  @include grid-backdrop(rgb(248 250 252 / 0.035), 56px);
+
+  &__layout {
+    display: grid;
+    gap: $space-10;
+
+    @include up(lg) {
+      grid-template-columns: 1fr 1.2fr;
+      gap: $space-16;
+    }
+  }
+
+  &__intro {
+    display: grid;
+    gap: $space-5;
+    align-content: start;
+  }
+
+  &__list {
+    display: grid;
+    margin: 0;
+    border: 1px solid var(--color-dark-border);
+    border-radius: $radius-lg;
+    background: rgb(19 26 42 / 0.6);
+  }
+
+  &__item {
+    padding: $space-5 $space-6;
+
+    & + & {
+      border-top: 1px solid var(--color-dark-border);
+    }
+
+    dt {
+      display: flex;
+      align-items: center;
+      gap: $space-3;
+      font-weight: 600;
+
+      app-icon {
+        width: 20px;
+        height: 20px;
+        color: #34d399;
+      }
+    }
+
+    dd {
+      margin: $space-2 0 0 32px;
+      font-size: 0.9rem;
+      color: var(--color-dark-muted);
+    }
+  }
+}
+
+.member {
+  @include card(0);
+  @include card-interactive;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &__photo {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: var(--color-dark);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(0.35) contrast(1.05);
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgb(11 15 25 / 0.7), transparent 60%);
+    }
+  }
+
+  &__initials {
+    position: absolute;
+    left: $space-5;
+    bottom: -22px;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border: 3px solid var(--color-surface);
+    border-radius: $radius-md;
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  &__body {
+    display: grid;
+    gap: $space-3;
+    align-content: start;
+    flex: 1;
+    padding: $space-10 $space-6 $space-6;
+  }
+
+  &__role {
+    font-size: 0.8rem;
+    color: var(--color-accent);
+  }
+
+  &__bio {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+  }
+}
+
+.faq {
+  display: grid;
+  gap: $space-10;
+
+  @include up(lg) {
+    grid-template-columns: 1fr 1.6fr;
+    gap: $space-16;
+  }
+
+  &__intro {
+    display: grid;
+    gap: $space-4;
+    align-content: start;
+    justify-items: start;
+  }
+
+  &__list {
+    border-top: 1px solid var(--color-border);
+  }
+
+  &__item {
+    border-bottom: 1px solid var(--color-border);
+
+    h3 {
+      font-size: inherit;
+    }
+  }
+
+  &__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-4;
+    width: 100%;
+    padding: $space-5 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--color-text);
+
+    app-icon {
+      flex-shrink: 0;
+      color: var(--color-text-muted);
+      transition: transform $duration-base $ease-out;
+    }
+
+    &:hover {
+      color: var(--color-accent);
+    }
+
+    .is-open & app-icon {
+      transform: rotate(180deg);
+      color: var(--color-accent);
+    }
+  }
+
+  // Animatable height via CSS grid rows trick.
+  &__answer {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows $duration-base $ease-out;
+
+    .is-open & {
+      grid-template-rows: 1fr;
+    }
+  }
+
+  &__answer-inner {
+    overflow: hidden;
+    visibility: hidden;
+    transition: visibility $duration-base;
+
+    .is-open & {
+      visibility: visible;
+    }
+
+    p {
+      padding-bottom: $space-5;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      max-width: 68ch;
+    }
+  }
+}

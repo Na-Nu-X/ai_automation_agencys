@@ -1,0 +1,198 @@
+@let st = state();
+@if (st.status === 'loading') {
+  <section class="page-hero dark">
+    <div class="container page-hero__inner">
+      <div class="skeleton skeleton--dark" style="height: 20px; width: 220px"></div>
+      <div class="skeleton skeleton--dark" style="height: 56px; width: min(680px, 100%)"></div>
+      <div class="skeleton skeleton--dark" style="height: 64px; width: min(560px, 100%)"></div>
+    </div>
+  </section>
+} @else if (st.status === 'error') {
+  <section class="section">
+    <div class="container">
+      <div class="empty-state">
+        <app-icon [name]="st.notFound ? 'search' : 'alert'" />
+        <h1 class="h2">{{ st.notFound ? 'Riešenie sme nenašli' : 'Riešenie sa nepodarilo načítať' }}</h1>
+        <p>
+          {{
+            st.notFound
+              ? 'Odkaz je pravdepodobne neaktuálny alebo bolo riešenie presunuté.'
+              : 'Skontrolujte pripojenie a skúste stránku obnoviť.'
+          }}
+        </p>
+        <a routerLink="/riesenia" class="btn"><app-icon name="arrow-left" /> Späť na katalóg riešení</a>
+      </div>
+    </div>
+  </section>
+} @else {
+  @let s = st.data;
+  <section class="page-hero dark">
+    <div class="container hero">
+      <div class="hero__copy">
+        <ol class="breadcrumb breadcrumb--light" aria-label="Omrvinková navigácia">
+          <li><a routerLink="/">Domov</a></li>
+          <li><a routerLink="/riesenia">AI riešenia</a></li>
+          <li>
+            <a routerLink="/riesenia" [queryParams]="{ kategoria: s.category.slug }">{{ s.category.name }}</a>
+          </li>
+        </ol>
+        <span class="hero__category"><app-icon [name]="s.category.icon_name" /> {{ s.category.name }}</span>
+        <h1>{{ s.name }}</h1>
+        <p class="lead">{{ s.short_description }}</p>
+        <div class="hero__ctas">
+          <a
+            routerLink="/kontakt"
+            [queryParams]="{ typ: 'konkretne_riesenie', riesenie: s.slug }"
+            class="btn btn--primary btn--lg"
+          >
+            Chcem toto riešenie pre našu firmu <app-icon name="arrow-right" />
+          </a>
+        </div>
+      </div>
+
+      <dl class="facts">
+        <div class="facts__item">
+          <dt><app-icon name="calendar" /> Typická doba dodania</dt>
+          <dd class="mono">{{ s.typical_implementation_time }}</dd>
+        </div>
+        <div class="facts__item">
+          <dt><app-icon name="trending" /> Očakávaná úspora</dt>
+          <dd class="mono facts__success">{{ s.average_time_saved_label }}</dd>
+        </div>
+        @if (price(); as p) {
+          <div class="facts__item">
+            <dt><app-icon name="euro" /> Implementácia od</dt>
+            <dd class="mono">{{ p }} <small>bez DPH</small></dd>
+          </div>
+        }
+      </dl>
+    </div>
+  </section>
+
+  <div class="container body">
+    <article class="body__main">
+      @if (s.problem_statement) {
+        <section class="block">
+          <span class="block__num mono">01</span>
+          <h2 class="h3">Aký problém riešenie odstraňuje</h2>
+          <p class="block__problem">{{ s.problem_statement }}</p>
+        </section>
+      }
+
+      <section class="block">
+        <span class="block__num mono">02</span>
+        <h2 class="h3">Ako riešenie funguje</h2>
+        <p>{{ s.detailed_description }}</p>
+      </section>
+
+      <section class="block">
+        <span class="block__num mono">03</span>
+        <h2 class="h3">Ako systém funguje krok za krokom</h2>
+        <ol class="flow">
+          @for (step of s.workflow_steps; track $index; let i = $index; let last = $last) {
+            <li class="flow__step" [class.is-last]="last">
+              <span class="flow__node mono">{{ i + 1 }}</span>
+              <div class="flow__body">
+                <span class="flow__tag mono">Krok {{ i + 1 }}{{ last ? ' · výstup' : '' }}</span>
+                <p>{{ step }}</p>
+              </div>
+            </li>
+          }
+        </ol>
+      </section>
+
+      <section class="block">
+        <span class="block__num mono">04</span>
+        <h2 class="h3">Technológie a integrácie</h2>
+        <div class="tech">
+          <div class="tech__col">
+            <h3 class="tech__heading">Technologický stack</h3>
+            <ul class="pill-list">
+              @for (tech of s.tech_stack; track tech) {
+                <li class="pill pill--accent">{{ tech }}</li>
+              }
+            </ul>
+          </div>
+          @if (s.integrations.length) {
+            <div class="tech__col">
+              <h3 class="tech__heading">Napojenie na vaše systémy</h3>
+              <ul class="tech__list">
+                @for (integration of s.integrations; track integration) {
+                  <li><app-icon name="plug" />{{ integration }}</li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+        <p class="tech__note">
+          Napojíme sa aj na ďalšie systémy – CRM, ERP, e-mail, Slack či Microsoft Teams – cez API, webhooky alebo
+          databázový prístup.
+        </p>
+      </section>
+
+      <section class="block">
+        <span class="block__num mono">05</span>
+        <h2 class="h3">Bezpečnosť dát</h2>
+        <ul class="security">
+          @for (pillar of securityPillars; track pillar.title) {
+            <li>
+              <app-icon [name]="pillar.icon" />
+              <div>
+                <strong>{{ pillar.title }}</strong>
+                <p>{{ pillar.text }}</p>
+              </div>
+            </li>
+          }
+        </ul>
+      </section>
+    </article>
+
+    <aside class="body__aside">
+      <div class="summary">
+        <span class="eyebrow">Súhrn riešenia</span>
+        <dl class="summary__list">
+          <div><dt>Kategória</dt><dd>{{ s.category.name }}</dd></div>
+          <div><dt>Dodanie</dt><dd class="mono">{{ s.typical_implementation_time }}</dd></div>
+          <div><dt>Úspora</dt><dd class="mono summary__success">{{ s.average_time_saved_label }}</dd></div>
+          @if (price(); as p) {
+            <div><dt>Cena od</dt><dd class="mono">{{ p }}</dd></div>
+          }
+        </dl>
+        <a
+          routerLink="/kontakt"
+          [queryParams]="{ typ: 'konkretne_riesenie', riesenie: s.slug }"
+          class="btn btn--primary btn--block"
+        >
+          Chcem toto riešenie
+        </a>
+        <a routerLink="/" fragment="roi-kalkulacka" class="btn btn--block">
+          <app-icon name="gauge" /> Vypočítať návratnosť
+        </a>
+        <p class="summary__note">
+          <app-icon name="shield" /> {{ config.compliance.shortNote }}
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  @if (related().length) {
+    <section class="section section--soft">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">Súvisiace</span>
+          <h2>Ďalšie riešenia v kategórii {{ s.category.name }}</h2>
+        </div>
+        <div class="grid grid--3">
+          @for (item of related(); track item.id) {
+            <app-solution-card [solution]="item" />
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  <app-cta-band
+    title="Prispôsobíme riešenie presne vašim procesom"
+    text="Na bezplatnom audite overíme, ako by toto riešenie fungovalo s vašimi dátami a systémami, a pripravíme pevnú cenovú ponuku."
+  />
+}

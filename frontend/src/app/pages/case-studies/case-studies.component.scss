@@ -1,0 +1,116 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.totals {
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 0;
+
+    @include up(lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      gap: $space-2;
+      padding: $space-6 $space-4;
+      border-right: 1px solid var(--color-border);
+
+      &:nth-child(2n) {
+        border-right: 0;
+      }
+
+      &:nth-child(-n + 2) {
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      @include up(lg) {
+        padding: $space-8 $space-6;
+        border-bottom: 0 !important;
+
+        &:nth-child(2n) {
+          border-right: 1px solid var(--color-border);
+        }
+
+        &:first-child {
+          padding-left: 0;
+        }
+
+        &:last-child {
+          border-right: 0;
+        }
+      }
+    }
+
+    dd {
+      margin: 0;
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      color: var(--color-success);
+      line-height: 1;
+    }
+
+    dt {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+    }
+  }
+}
+
+.filters {
+  display: flex;
+  gap: $space-2;
+  margin-bottom: $space-8;
+  overflow-x: auto;
+  padding-bottom: $space-1;
+
+  &__item {
+    flex-shrink: 0;
+    min-height: 40px;
+    padding: 0 $space-4;
+    border: 1px solid var(--color-border);
+    border-radius: $radius-pill;
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    &.is-active {
+      background: var(--color-dark);
+      border-color: var(--color-dark);
+      color: var(--color-dark-text);
+    }
+  }
+}
+
+.list {
+  display: grid;
+  gap: $space-6;
+}
+
+.disclaimer {
+  display: flex;
+  gap: $space-3;
+  max-width: 760px;
+  margin-top: $space-10;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+
+  app-icon {
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+  }
+}

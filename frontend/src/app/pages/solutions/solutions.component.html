@@ -1,0 +1,128 @@
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Katalóg AI riešení</span>
+    <h1>AI automatizácie pripravené na nasadenie</h1>
+    <p class="lead">
+      Overené architektúry pre jednotlivé oddelenia firmy. Každé riešenie prispôsobíme vašim procesom, dátam a
+      systémom – s transparentnou dobou implementácie a očakávanou úsporou.
+    </p>
+  </div>
+</section>
+
+<section class="catalog">
+  <div class="container">
+    <div class="toolbar">
+      <div class="toolbar__search">
+        <app-icon name="search" />
+        <label class="visually-hidden" for="solution-search">Hľadať riešenie alebo technológiu</label>
+        <input
+          id="solution-search"
+          type="search"
+          class="input"
+          placeholder="Hľadať riešenie alebo technológiu (napr. n8n, faktúry, CRM)…"
+          [value]="searchDraft()"
+          (input)="onSearch($event)"
+          autocomplete="off"
+        />
+      </div>
+      <div class="toolbar__sort">
+        <label class="visually-hidden" for="solution-ordering">Zoradiť</label>
+        <select id="solution-ordering" class="select" [value]="ordering()" (change)="onOrdering($event)">
+          @for (opt of orderingOptions; track opt.value) {
+            <option [value]="opt.value" [selected]="opt.value === ordering()">{{ opt.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    @let cats = categories();
+    @if (cats.status === 'success') {
+      <div class="tabs" role="toolbar" aria-label="Filtrovať podľa oddelenia">
+        <button
+          type="button"
+          class="tabs__item"
+          [class.is-active]="!category()"
+          [attr.aria-pressed]="!category()"
+          (click)="selectCategory(null)"
+        >
+          Všetky
+        </button>
+        @for (cat of cats.data; track cat.id) {
+          <button
+            type="button"
+            class="tabs__item"
+            [class.is-active]="category() === cat.slug"
+            [attr.aria-pressed]="category() === cat.slug"
+            (click)="selectCategory(cat.slug)"
+          >
+            <app-icon [name]="cat.icon_name" />
+            {{ cat.name }}
+            <span class="tabs__count mono">{{ cat.solution_count }}</span>
+          </button>
+        }
+      </div>
+    }
+
+    <div class="catalog__meta" aria-live="polite">
+      @if (resultLabel()) {
+        <p>
+          <span class="mono">{{ resultLabel() }}</span>
+          @if (activeCategoryName(); as name) {
+            v kategórii <strong>{{ name }}</strong>
+          }
+          @if (search()) {
+            pre výraz <strong>„{{ search() }}"</strong>
+          }
+        </p>
+      }
+      @if (hasActiveFilters()) {
+        <button type="button" class="catalog__reset" (click)="resetFilters()">
+          <app-icon name="x" /> Zrušiť filtre
+        </button>
+      }
+    </div>
+
+    @let res = results();
+    @if (res.status === 'success') {
+      @if (res.data.length) {
+        <div class="grid grid--3">
+          @for (solution of res.data; track solution.id) {
+            <app-solution-card [solution]="solution" />
+          }
+        </div>
+      } @else {
+        <div class="empty-state">
+          <app-icon name="search" />
+          <h2 class="h3">Nenašli sme žiadne riešenie</h2>
+          <p>Skúste iný výraz alebo nám opíšte svoj proces – navrhneme riešenie na mieru.</p>
+          <button type="button" class="btn" (click)="resetFilters()">Zobraziť všetky riešenia</button>
+        </div>
+      }
+    } @else if (res.status === 'loading') {
+      <div class="grid grid--3">
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+          <div class="skeleton skeleton--card"></div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <app-icon name="alert" />
+        <p>Katalóg sa nepodarilo načítať. Skontrolujte pripojenie a skúste to znova.</p>
+      </div>
+    }
+
+    <aside class="custom">
+      <div>
+        <h2 class="h3">Nenašli ste svoj proces?</h2>
+        <p class="text-secondary">
+          Väčšina našich projektov je na mieru. Opíšte nám, čo vášmu tímu zaberá najviac času.
+        </p>
+      </div>
+      <a routerLink="/kontakt" [queryParams]="{ typ: 'konkretne_riesenie' }" class="btn btn--primary">
+        Navrhnúť riešenie na mieru <app-icon name="arrow-right" />
+      </a>
+    </aside>
+  </div>
+</section>
+
+<app-cta-band />

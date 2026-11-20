@@ -1,0 +1,90 @@
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Prípadové štúdie & ROI</span>
+    <h1>Výsledky, ktoré sa dajú zmerať</h1>
+    <p class="lead">
+      Reálne projekty slovenských a európskych firiem. Pri každom uvádzame stav pred a po nasadení AI, ušetrené
+      hodiny, zníženie nákladov a dobu návratnosti investície.
+    </p>
+  </div>
+</section>
+
+@if (totals(); as t) {
+  <section class="totals">
+    <div class="container">
+      <dl class="totals__grid">
+        <div>
+          <dd class="mono">{{ t.monthlyHours }} h</dd>
+          <dt>ušetrených mesačne v uvedených projektoch</dt>
+        </div>
+        <div>
+          <dd class="mono">{{ t.annualHours }} h</dd>
+          <dt>ročne vrátených tímom na prácu s vyššou pridanou hodnotou</dt>
+        </div>
+        <div>
+          <dd class="mono">−{{ t.avgReduction }} %</dd>
+          <dt>priemerné zníženie nákladov na proces</dt>
+        </div>
+        <div>
+          <dd class="mono">{{ t.avgPayback }} mes.</dd>
+          <dt>priemerná doba návratnosti investície</dt>
+        </div>
+      </dl>
+    </div>
+  </section>
+}
+
+<section class="section section--tight">
+  <div class="container">
+    @let st = state();
+    @if (st.status === 'success') {
+      @if (industries().length > 1) {
+        <div class="filters" role="toolbar" aria-label="Filtrovať podľa odvetvia">
+          <button type="button" class="filters__item" [class.is-active]="!industry()" [attr.aria-pressed]="!industry()" (click)="industry.set(null)">
+            Všetky odvetvia
+          </button>
+          @for (ind of industries(); track ind) {
+            <button
+              type="button"
+              class="filters__item"
+              [class.is-active]="industry() === ind"
+              [attr.aria-pressed]="industry() === ind"
+              (click)="industry.set(ind)"
+            >
+              {{ ind }}
+            </button>
+          }
+        </div>
+      }
+      <div class="list">
+        @for (study of filtered(); track study.id) {
+          <app-case-study-card [study]="study" />
+        } @empty {
+          <div class="empty-state"><p>Zatiaľ tu nie sú žiadne prípadové štúdie.</p></div>
+        }
+      </div>
+    } @else if (st.status === 'loading') {
+      <div class="list">
+        @for (i of [1, 2]; track i) {
+          <div class="skeleton" style="height: 460px"></div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <app-icon name="alert" />
+        <p>Prípadové štúdie sa nepodarilo načítať. Skúste obnoviť stránku.</p>
+      </div>
+    }
+
+    <p class="disclaimer">
+      <app-icon name="info" />
+      Z dôvodu ochrany obchodného tajomstva uvádzame klientov anonymizovane. Referencie a kontakty na konkrétnych
+      klientov radi poskytneme po podpise NDA.
+    </p>
+  </div>
+</section>
+
+<app-cta-band
+  title="Chcete podobné výsledky aj vo vašej firme?"
+  text="Na bezplatnom audite identifikujeme procesy s najvyšším potenciálom a vypočítame očakávanú návratnosť ešte pred začiatkom projektu."
+/>

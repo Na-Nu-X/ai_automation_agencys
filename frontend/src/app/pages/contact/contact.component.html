@@ -1,0 +1,226 @@
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Bezplatný AI audit & kontakt</span>
+    <h1>Rezervujte si bezplatný AI audit vašich procesov</h1>
+    <p class="lead">
+      45-minútová konzultácia s AI architektom. Zistíte, ktoré procesy sa oplatí automatizovať, koľko to bude stáť
+      a kedy sa vám investícia vráti. Bez záväzkov.
+    </p>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="container layout">
+    <div class="layout__main">
+      @if (submitState() === 'success') {
+        <div class="success" role="status">
+          <span class="success__icon"><app-icon name="check-circle" /></span>
+          <h2>Ďakujeme, dopyt sme prijali</h2>
+          <p class="lead">
+            Potvrdenie a návrh termínov konzultácie vám pošleme na <strong>{{ submittedEmail() }}</strong>.
+            {{ config.contact.responseTime }}
+          </p>
+          <ol class="success__steps">
+            <li><span class="mono">01</span>Prezrieme si váš dopyt a pripravíme sa na stretnutie.</li>
+            <li><span class="mono">02</span>Ozveme sa s návrhom termínu 45-minútovej online konzultácie.</li>
+            <li><span class="mono">03</span>Po audite dostanete písomné zhrnutie príležitostí s odhadom ROI.</li>
+          </ol>
+          <div class="success__actions">
+            <a routerLink="/pripadove-studie" class="btn">Pozrieť prípadové štúdie</a>
+            <button type="button" class="btn btn--primary" (click)="startOver()">Odoslať ďalší dopyt</button>
+          </div>
+        </div>
+      } @else {
+        <form class="contact-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <!-- Inquiry type -->
+          <fieldset class="group">
+            <legend class="group__legend"><span class="mono">01</span> Čo potrebujete?</legend>
+            <div class="options options--3">
+              @for (type of inquiryTypes; track type.value) {
+                <label class="option" [class.is-selected]="inquiryType() === type.value">
+                  <input type="radio" formControlName="inquiry_type" [value]="type.value" class="visually-hidden" />
+                  <span class="option__title">{{ type.label }}</span>
+                  <span class="option__desc">{{ type.description }}</span>
+                </label>
+              }
+            </div>
+            @if (showSolutionSelect()) {
+              <div class="field">
+                <label class="field__label" for="solution">
+                  Riešenie, o ktoré máte záujem <span class="field__optional">(nepovinné)</span>
+                </label>
+                <select id="solution" class="select" formControlName="solution">
+                  <option value="">Vyberte riešenie alebo ho opíšte v správe</option>
+                  @for (s of solutions(); track s.slug) {
+                    <option [value]="s.slug">{{ s.name }}</option>
+                  }
+                </select>
+                @if (controlError(form.controls.solution); as msg) {
+                  <span class="field__error">{{ msg }}</span>
+                }
+              </div>
+            }
+          </fieldset>
+
+          <!-- Company -->
+          <fieldset class="group">
+            <legend class="group__legend"><span class="mono">02</span> O vašej firme</legend>
+            <div class="field">
+              <label class="field__label" for="company_name">Názov firmy</label>
+              <input id="company_name" class="input" formControlName="company_name" autocomplete="organization"
+                     [class.is-invalid]="controlError(form.controls.company_name)" />
+              @if (controlError(form.controls.company_name); as msg) {
+                <span class="field__error">{{ msg }}</span>
+              }
+            </div>
+
+            <div class="field" role="radiogroup" aria-labelledby="team-size-label">
+              <span class="field__label" id="team-size-label">Veľkosť firmy</span>
+              <div class="chips">
+                @for (size of teamSizes; track size.value) {
+                  <label class="chip" [class.is-selected]="form.controls.team_size.value === size.value">
+                    <input type="radio" formControlName="team_size" [value]="size.value" class="visually-hidden" />
+                    {{ size.label }}
+                  </label>
+                }
+              </div>
+              @if (controlError(form.controls.team_size); as msg) {
+                <span class="field__error">Vyberte veľkosť firmy.</span>
+              }
+            </div>
+
+            <div class="field" role="radiogroup" aria-labelledby="bottleneck-label">
+              <span class="field__label" id="bottleneck-label">Kde vás proces najviac brzdí?</span>
+              <div class="chips">
+                @for (b of bottlenecks; track b.value) {
+                  <label class="chip" [class.is-selected]="form.controls.primary_bottleneck.value === b.value">
+                    <input type="radio" formControlName="primary_bottleneck" [value]="b.value" class="visually-hidden" />
+                    {{ b.label }}
+                  </label>
+                }
+              </div>
+              @if (controlError(form.controls.primary_bottleneck); as msg) {
+                <span class="field__error">Vyberte oblasť, ktorá vás najviac brzdí.</span>
+              }
+            </div>
+          </fieldset>
+
+          <!-- Contact -->
+          <fieldset class="group">
+            <legend class="group__legend"><span class="mono">03</span> Kontaktné údaje</legend>
+            <div class="row">
+              <div class="field">
+                <label class="field__label" for="contact_name">Meno a priezvisko</label>
+                <input id="contact_name" class="input" formControlName="contact_name" autocomplete="name"
+                       [class.is-invalid]="controlError(form.controls.contact_name)" />
+                @if (controlError(form.controls.contact_name); as msg) {
+                  <span class="field__error">{{ msg }}</span>
+                }
+              </div>
+              <div class="field">
+                <label class="field__label" for="work_email">Pracovný e-mail</label>
+                <input id="work_email" type="email" class="input" formControlName="work_email" autocomplete="email"
+                       placeholder="meno@firma.sk" [class.is-invalid]="controlError(form.controls.work_email)" />
+                @if (controlError(form.controls.work_email); as msg) {
+                  <span class="field__error">{{ msg }}</span>
+                }
+              </div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="phone">Telefón <span class="field__optional">(nepovinné)</span></label>
+              <input id="phone" type="tel" class="input" formControlName="phone" autocomplete="tel"
+                     placeholder="+421 900 123 456" [class.is-invalid]="controlError(form.controls.phone)" />
+              @if (controlError(form.controls.phone); as msg) {
+                <span class="field__error">
+                  {{ form.controls.phone.errors?.['pattern'] ? 'Zadajte platné telefónne číslo, napr. +421 900 123 456.' : msg }}
+                </span>
+              }
+            </div>
+            <div class="field">
+              <label class="field__label" for="message">
+                Opíšte proces, ktorý chcete zautomatizovať <span class="field__optional">(nepovinné)</span>
+              </label>
+              <textarea id="message" class="textarea" formControlName="message" rows="5"
+                        placeholder="Napr. Mesačne spracúvame cca 800 faktúr, ktoré ručne prepisujeme do Pohody…"
+                        [class.is-invalid]="controlError(form.controls.message)"></textarea>
+              @if (controlError(form.controls.message); as msg) {
+                <span class="field__error">{{ msg }}</span>
+              }
+            </div>
+            <label class="checkbox">
+              <input type="checkbox" formControlName="gdpr_consent" />
+              <span>
+                Súhlasím so spracovaním osobných údajov za účelom vybavenia dopytu. Údaje uchovávame v EÚ a
+                nezdieľame ich s tretími stranami.
+              </span>
+            </label>
+            @if (controlError(form.controls.gdpr_consent); as msg) {
+              <span class="field__error">{{ msg }}</span>
+            }
+          </fieldset>
+
+          @if (submitError(); as err) {
+            <div class="alert alert--error" role="alert"><app-icon name="alert" />{{ err }}</div>
+          }
+
+          <div class="submit">
+            <button type="submit" class="btn btn--primary btn--lg" [disabled]="submitState() === 'submitting'">
+              @if (submitState() === 'submitting') {
+                <span class="spinner"></span> Odosielam…
+              } @else {
+                Odoslať a rezervovať konzultáciu <app-icon name="arrow-right" />
+              }
+            </button>
+            <p class="submit__note"><span class="status-dot"></span>{{ config.contact.responseTime }}</p>
+          </div>
+        </form>
+      }
+    </div>
+
+    <aside class="layout__aside">
+      <div class="panel dark">
+        <span class="eyebrow">Čo získate z auditu</span>
+        <ul class="panel__list">
+          @for (b of auditBenefits; track b) {
+            <li><app-icon name="check" />{{ b }}</li>
+          }
+        </ul>
+        <div class="panel__price">
+          <span class="mono">0 €</span>
+          <span>bez záväzkov, online alebo osobne v Bratislave</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <span class="eyebrow">Priamy kontakt</span>
+        <ul class="contact-list">
+          <li>
+            <app-icon name="mail" />
+            <a [href]="'mailto:' + config.contact.email">{{ config.contact.email }}</a>
+          </li>
+          <li>
+            <app-icon name="phone" />
+            <a [href]="'tel:' + config.contact.phoneHref">{{ config.contact.phone }}</a>
+          </li>
+          <li>
+            <app-icon name="map-pin" />
+            <span>
+              {{ config.brand.legalName }}<br />
+              {{ config.contact.address.street }}, {{ config.contact.address.city }}
+            </span>
+          </li>
+          <li>
+            <app-icon name="clock" />
+            <span>{{ config.contact.officeHours }}</span>
+          </li>
+        </ul>
+        <dl class="legal mono">
+          <div><dt>IČO</dt><dd>{{ config.legal.ico }}</dd></div>
+          <div><dt>DIČ</dt><dd>{{ config.legal.dic }}</dd></div>
+        </dl>
+      </div>
+
+      <p class="compliance"><app-icon name="shield" />{{ config.compliance.shortNote }}</p>
+    </aside>
+  </div>
+</section>

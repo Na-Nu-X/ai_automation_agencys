@@ -1,0 +1,226 @@
+<!-- Hero ------------------------------------------------------------------>
+<section class="hero dark">
+  <div class="hero__grid" aria-hidden="true"></div>
+  <div class="container hero__inner">
+    <div class="hero__copy">
+      <span class="eyebrow">{{ config.brand.tagline }}</span>
+      <h1>
+        AI agenti, ktorí preberú rutinnú prácu vášho tímu.
+        <span class="hero__accent">Merateľne a bezpečne.</span>
+      </h1>
+      <p class="lead">
+        Navrhujeme a nasadzujeme AI automatizácie pre zákaznícku podporu, back-office, obchod a firemné
+        znalosti. Napojené na vaše CRM a ERP, prevádzkované v EÚ, s jasnou návratnosťou investície.
+      </p>
+      <div class="hero__ctas">
+        <a routerLink="/kontakt" class="btn btn--primary btn--lg">
+          Rezervovať bezplatný AI audit <app-icon name="arrow-right" />
+        </a>
+        <a routerLink="/" fragment="roi-kalkulacka" class="btn btn--ghost-light btn--lg">
+          <app-icon name="gauge" /> Vypočítať úsporu (ROI)
+        </a>
+      </div>
+      <ul class="hero__trust" aria-label="Súlad a bezpečnosť">
+        @for (badge of config.compliance.badges; track badge) {
+          <li><app-icon name="check" />{{ badge }}</li>
+        }
+      </ul>
+    </div>
+
+    <div class="system" aria-label="Ukážka bežiaceho AI workflow">
+      <div class="system__bar">
+        <span class="system__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="mono">agent / faktury-erp</span>
+        <span class="system__status mono"><span class="status-dot"></span>produkcia</span>
+      </div>
+      <ol class="system__steps">
+        @for (step of pipeline; track step.label; let i = $index) {
+          <li class="system__step" [style.animation-delay.ms]="i * 140">
+            <span class="system__icon"><app-icon [name]="step.icon" /></span>
+            <span class="system__text">
+              <span class="system__label">{{ step.label }}</span>
+              <span class="system__meta mono">{{ step.meta }}</span>
+            </span>
+            <span class="system__state mono">{{ step.state }}</span>
+          </li>
+        }
+      </ol>
+      <dl class="system__stats">
+        <div><dt>Spracované dnes</dt><dd class="mono">412</dd></div>
+        <div><dt>Bez zásahu človeka</dt><dd class="mono">94,2 %</dd></div>
+        <div><dt>Ušetrené dnes</dt><dd class="mono accent">31,5 h</dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stack" aria-label="Technológie, s ktorými pracujeme">
+      <span class="stack__label mono">Stavíme na</span>
+      <ul class="stack__list">
+        @for (tech of config.techStack; track tech) {
+          <li class="mono">{{ tech }}</li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Featured solutions ------------------------------------------------------>
+<section class="section">
+  <div class="container">
+    <div class="section-header section-header--split">
+      <div class="section-header">
+        <span class="eyebrow">AI riešenia</span>
+        <h2>Čo pre vás dokážeme zautomatizovať</h2>
+        <p class="lead">
+          Overené architektúry, ktoré prispôsobíme vašim procesom a systémom. Každé s jasnou dobou
+          implementácie a očakávanou úsporou.
+        </p>
+      </div>
+      <a routerLink="/riesenia" class="btn">Celý katalóg riešení <app-icon name="arrow-right" /></a>
+    </div>
+
+    @if (categories(); as cats) {
+      @if (cats.status === 'success') {
+        <ul class="categories" aria-label="Kategórie riešení">
+          @for (cat of cats.data; track cat.id) {
+            <li>
+              <a [routerLink]="['/riesenia']" [queryParams]="{ kategoria: cat.slug }" class="categories__item">
+                <app-icon [name]="cat.icon_name" />
+                <span>{{ cat.name }}</span>
+                <span class="categories__count mono">{{ cat.solution_count }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      }
+    }
+
+    @let sol = solutions();
+    @if (sol.status === 'success') {
+      <div class="grid grid--3">
+        @for (solution of sol.data.slice(0, 6); track solution.id) {
+          <app-solution-card [solution]="solution" />
+        }
+      </div>
+    } @else if (sol.status === 'loading') {
+      <div class="grid grid--3">
+        @for (i of [1, 2, 3]; track i) {
+          <div class="skeleton skeleton--card"></div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <app-icon name="alert" />
+        <p>Riešenia sa nepodarilo načítať. Skúste obnoviť stránku.</p>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Results ------------------------------------------------------------------>
+<section class="section section--soft">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow">Výsledky</span>
+      <h2>Overené výsledky u klientov</h2>
+      <p class="lead">Žiadne sľuby bez čísel. Každý projekt meriame od prvého dňa v produkcii.</p>
+    </div>
+
+    <dl class="metrics">
+      @for (metric of config.trustMetrics; track metric.label) {
+        <div class="metrics__item">
+          <dd class="mono">{{ metric.value }}</dd>
+          <dt>{{ metric.label }}</dt>
+        </div>
+      }
+    </dl>
+
+    @if (caseStudies(); as cs) {
+      @if (cs.status === 'success') {
+        <div class="grid grid--3 results__cases">
+          @for (study of cs.data.slice(0, 3); track study.id) {
+            <app-case-study-card [study]="study" [compact]="true" />
+          }
+        </div>
+      } @else if (cs.status === 'loading') {
+        <div class="grid grid--3 results__cases">
+          @for (i of [1, 2, 3]; track i) {
+            <div class="skeleton skeleton--card"></div>
+          }
+        </div>
+      }
+    }
+    <div class="results__more">
+      <a routerLink="/pripadove-studie" class="link-arrow">Všetky prípadové štúdie <app-icon name="arrow-right" /></a>
+    </div>
+  </div>
+</section>
+
+<!-- ROI calculator -------------------------------------------------------------->
+<section class="section" id="roi-kalkulacka">
+  <div class="container">
+    <div class="section-header section-header--center">
+      <span class="eyebrow">ROI kalkulačka</span>
+      <h2>Koľko vám môže AI automatizácia ušetriť?</h2>
+      <p class="lead">
+        Orientačný výpočet úspory času a nákladov za 30 sekúnd. Výsledok si môžete nechať poslať alebo s ním
+        rovno rezervovať audit.
+      </p>
+    </div>
+    <app-roi-calculator />
+  </div>
+</section>
+
+<!-- Process --------------------------------------------------------------------->
+<section class="section section--soft">
+  <div class="container">
+    <div class="section-header section-header--split">
+      <div class="section-header">
+        <span class="eyebrow">Proces</span>
+        <h2>Ako prebieha spolupráca</h2>
+        <p class="lead">Inžiniersky prístup v štyroch krokoch – od auditu po produkčnú prevádzku.</p>
+      </div>
+      <a routerLink="/ako-pracujeme" class="btn">Naša metodika <app-icon name="arrow-right" /></a>
+    </div>
+
+    <ol class="process">
+      @for (step of processSteps; track step.number) {
+        <li class="process__step">
+          <div class="process__head">
+            <span class="process__num mono">{{ step.number }}</span>
+            <span class="pill">{{ step.duration }}</span>
+          </div>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.summary }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<!-- Security ------------------------------------------------------------------>
+<section class="section">
+  <div class="container security">
+    <div class="security__intro">
+      <span class="eyebrow">Bezpečnosť</span>
+      <h2>Bezpečnosť dát a GDPR</h2>
+      <p class="lead">{{ config.compliance.gdprNote }}</p>
+      <p class="security__hosting">
+        <app-icon name="server" />
+        {{ config.compliance.hostingNote }}
+      </p>
+    </div>
+    <div class="security__grid">
+      @for (pillar of securityPillars; track pillar.title) {
+        <article class="security__item">
+          <app-icon [name]="pillar.icon" />
+          <h3>{{ pillar.title }}</h3>
+          <p>{{ pillar.text }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<app-cta-band />

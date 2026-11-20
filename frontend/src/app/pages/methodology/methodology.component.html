@@ -1,0 +1,176 @@
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <span class="eyebrow">Proces & tím</span>
+    <h1>Inžiniersky prístup k AI, nie experimenty</h1>
+    <p class="lead">
+      AI automatizácie staviame ako produkčný softvér: s jasnými metrikami, testovaním na reálnych dátach,
+      monitoringom a bezpečnosťou od prvého dňa. Takto pracujeme.
+    </p>
+  </div>
+</section>
+
+<!-- Principles -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow">Princípy</span>
+      <h2>Na čom staviame každý projekt</h2>
+    </div>
+    <div class="grid grid--4 principles">
+      @for (p of principles; track p.title) {
+        <article class="principles__item">
+          <app-icon [name]="p.icon" />
+          <h3>{{ p.title }}</h3>
+          <p>{{ p.text }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Process timeline -->
+<section class="section section--soft">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow">Metodika</span>
+      <h2>Od auditu po produkčnú prevádzku</h2>
+      <p class="lead">Každá fáza má jasné výstupy. Po audite a návrhu sa môžete rozhodnúť, či pokračovať – bez záväzkov.</p>
+    </div>
+    <ol class="timeline">
+      @for (step of steps; track step.number) {
+        <li class="timeline__item">
+          <div class="timeline__marker mono">{{ step.number }}</div>
+          <div class="timeline__card">
+            <div class="timeline__head">
+              <h3>{{ step.title }}</h3>
+              <span class="pill"><app-icon name="clock" />{{ step.duration }}</span>
+            </div>
+            <p>{{ step.summary }}</p>
+            <ul class="timeline__deliverables">
+              @for (d of step.deliverables; track d) {
+                <li><app-icon name="check" />{{ d }}</li>
+              }
+            </ul>
+          </div>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
+
+<!-- Security & hosting -->
+<section class="section dark security">
+  <div class="container">
+    <div class="security__layout">
+      <div class="security__intro">
+        <span class="eyebrow">Ochrana dát</span>
+        <h2>Ochrana dát a hosting v EÚ</h2>
+        <p class="lead">{{ config.compliance.gdprNote }}</p>
+        <ul class="pill-list">
+          @for (badge of config.compliance.badges; track badge) {
+            <li class="pill pill--dark"><app-icon name="check" />{{ badge }}</li>
+          }
+        </ul>
+      </div>
+      <dl class="security__list">
+        @for (item of security; track item.title) {
+          <div class="security__item">
+            <dt><app-icon [name]="item.icon" />{{ item.title }}</dt>
+            <dd>{{ item.text }}</dd>
+          </div>
+        }
+        <div class="security__item">
+          <dt><app-icon name="server" />Infraštruktúra</dt>
+          <dd>{{ config.compliance.hostingNote }}</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- Team -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow">Tím</span>
+      <h2>Ľudia, ktorí navrhnú a postavia vaše riešenie</h2>
+      <p class="lead">Seniorní inžinieri a procesní konzultanti. Žiadni juniori skrytí za obchodníkmi.</p>
+    </div>
+    @let t = team();
+    @if (t.status === 'success') {
+      <div class="grid grid--3">
+        @for (member of t.data; track member.id) {
+          <article class="member">
+            <div class="member__photo">
+              @if (member.photo_url) {
+                <img [src]="member.photo_url" [alt]="'Pracovisko – ' + member.full_name" loading="lazy" width="800" height="500" />
+              }
+              <span class="member__initials mono" aria-hidden="true">{{ initials(member.full_name) }}</span>
+            </div>
+            <div class="member__body">
+              <h3>{{ member.full_name }}</h3>
+              <p class="member__role mono">{{ member.role_title }}</p>
+              <p class="member__bio">{{ member.bio }}</p>
+              <ul class="pill-list" aria-label="Expertíza">
+                @for (tag of member.expertise_tags; track tag) {
+                  <li class="pill">{{ tag }}</li>
+                }
+              </ul>
+              @if (member.linkedin_url) {
+                <a [href]="member.linkedin_url" target="_blank" rel="noopener noreferrer" class="link-arrow">
+                  LinkedIn profil <app-icon name="arrow-right" />
+                </a>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    } @else if (t.status === 'loading') {
+      <div class="grid grid--3">
+        @for (i of [1, 2, 3]; track i) {
+          <div class="skeleton skeleton--card"></div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state"><p>Profily tímu sa nepodarilo načítať.</p></div>
+    }
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section section--soft">
+  <div class="container faq">
+    <div class="faq__intro">
+      <span class="eyebrow">FAQ</span>
+      <h2>Časté otázky</h2>
+      <p class="lead">Nenašli ste odpoveď? Napíšte nám a odpovieme do jedného pracovného dňa.</p>
+      <a routerLink="/kontakt" class="btn">Opýtať sa nás <app-icon name="arrow-right" /></a>
+    </div>
+    <div class="faq__list">
+      @for (item of faqs; track item.question; let i = $index) {
+        <div class="faq__item" [class.is-open]="openFaq() === i">
+          <h3>
+            <button
+              type="button"
+              class="faq__question"
+              [id]="'faq-q-' + i"
+              [attr.aria-expanded]="openFaq() === i"
+              [attr.aria-controls]="'faq-a-' + i"
+              (click)="toggleFaq(i)"
+            >
+              <span>{{ item.question }}</span>
+              <app-icon name="chevron-down" />
+            </button>
+          </h3>
+          <div class="faq__answer" [id]="'faq-a-' + i" role="region" [attr.aria-labelledby]="'faq-q-' + i">
+            <div class="faq__answer-inner">
+              <p>{{ item.answer }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<app-cta-band />
