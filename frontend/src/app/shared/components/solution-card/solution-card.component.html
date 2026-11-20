@@ -1,0 +1,47 @@
+@let s = solution();
+<article class="card">
+  <header class="card__head">
+    <span class="card__category">
+      <app-icon [name]="s.category.icon_name" />
+      {{ s.category.name }}
+    </span>
+    @if (s.is_featured) {
+      <span class="card__featured mono">Top</span>
+    }
+  </header>
+
+  <h3 class="card__title">
+    <a [routerLink]="['/riesenia', s.slug]" class="card__link">{{ s.name }}</a>
+  </h3>
+  <p class="card__desc">{{ s.short_description }}</p>
+
+  <ul class="pill-list" aria-label="Technológie">
+    @for (tech of visibleTech(); track tech) {
+      <li class="pill">{{ tech }}</li>
+    }
+    @if (hiddenTechCount() > 0) {
+      <li class="pill">+{{ hiddenTechCount() }}</li>
+    }
+  </ul>
+
+  <div class="card__saving">
+    <app-icon name="trending" />
+    <span>{{ s.average_time_saved_label }}</span>
+  </div>
+
+  <footer class="card__foot">
+    <dl class="card__meta">
+      <div>
+        <dt>Implementácia</dt>
+        <dd class="mono">{{ s.typical_implementation_time }}</dd>
+      </div>
+      @if (price(); as p) {
+        <div>
+          <dt>Cena od</dt>
+          <dd class="mono">{{ p }}</dd>
+        </div>
+      }
+    </dl>
+    <span class="link-arrow" aria-hidden="true">Detail riešenia <app-icon name="arrow-right" /></span>
+  </footer>
+</article>

@@ -1,0 +1,135 @@
+<div class="roi">
+  <div class="roi__inputs">
+    <div class="roi__inputs-head">
+      <span class="roi__step mono">Vstupy</span>
+      <p class="text-secondary">Posuňte jazdce podľa situácie vo vašej firme.</p>
+    </div>
+
+    @for (slider of sliders; track slider.id) {
+      <div class="slider">
+        <div class="slider__head">
+          <label class="slider__label" [for]="'roi-' + slider.id">{{ slider.label }}</label>
+          <output class="slider__value mono" [for]="'roi-' + slider.id">
+            {{ valueOf(slider.id) }} <span>{{ slider.unit }}</span>
+          </output>
+        </div>
+        <input
+          type="range"
+          class="slider__input"
+          [id]="'roi-' + slider.id"
+          [min]="slider.min"
+          [max]="slider.max"
+          [step]="slider.step"
+          [value]="valueOf(slider.id)"
+          [style.--fill]="fillPercent(slider) + '%'"
+          (input)="onSlide(slider.id, $event)"
+        />
+        <div class="slider__scale mono" aria-hidden="true">
+          <span>{{ slider.min }}</span><span>{{ slider.max }}</span>
+        </div>
+      </div>
+    }
+
+    <p class="roi__assumptions">
+      <app-icon name="info" />
+      Odhad počíta s {{ efficiencyPercent }} % mierou automatizácie rutinných úloh,
+      {{ workingWeeks }} pracovnými týždňami ročne a typickou cenou implementácie. Presné čísla pre vašu firmu
+      pripravíme v rámci bezplatného auditu.
+    </p>
+  </div>
+
+  <div class="roi__results dark" aria-live="polite">
+    <div class="roi__results-head">
+      <span class="roi__step mono">Výsledok</span>
+      <span class="roi__live mono"><span class="status-dot"></span>prepočet v reálnom čase</span>
+    </div>
+
+    <dl class="roi__metrics">
+      <div class="roi__metric roi__metric--primary">
+        <dt>Odhadovaná ročná finančná úspora</dt>
+        <dd class="mono">{{ display().savings }}</dd>
+        <span class="roi__sub mono">≈ {{ display().monthlySavings }} mesačne</span>
+      </div>
+      <div class="roi__metric">
+        <dt>Ročná úspora času</dt>
+        <dd class="mono">{{ display().hours }} h</dd>
+        <span class="roi__sub mono">≈ {{ display().fte }} FTE kapacity</span>
+      </div>
+      <div class="roi__metric">
+        <dt>Odhadovaná návratnosť investície</dt>
+        <dd class="mono">{{ display().payback }} <small>mes.</small></dd>
+        <span class="roi__sub mono">investícia od {{ display().investment }}</span>
+      </div>
+    </dl>
+
+    @switch (leadState()) {
+      @case ('success') {
+        <div class="roi__success" role="status">
+          <app-icon name="check-circle" />
+          <div>
+            <strong>Ďakujeme, odhad sme uložili.</strong>
+            <p>
+              Do 1 pracovného dňa vám pošleme návrh plánu automatizácie
+              @if (leadResult(); as lead) {
+                pre úsporu {{ formatNumber(lead.calculated_annual_hours_saved) }} hodín ročne
+              }
+              na e-mail {{ leadResult()?.work_email }}.
+            </p>
+          </div>
+        </div>
+      }
+      @case ('idle') {
+        <div class="roi__actions">
+          <button type="button" class="btn btn--primary btn--lg btn--block" (click)="bookWithEstimate()">
+            Rezervovať AI audit s týmto odhadom <app-icon name="arrow-right" />
+          </button>
+          <button type="button" class="btn btn--ghost-light btn--block" (click)="openLeadForm()">
+            <app-icon name="mail" /> Poslať detailný plán automatizácie e-mailom
+          </button>
+        </div>
+      }
+      @default {
+        <form class="roi__form" [formGroup]="leadForm" (ngSubmit)="submitLead()" novalidate>
+          <p class="roi__form-title">Pošleme vám prepočet a návrh plánu automatizácie</p>
+          @for (field of leadFields; track field.name) {
+            @let ctrl = leadForm.get(field.name);
+            <div class="field">
+              <label class="field__label" [for]="'roi-lead-' + field.name">{{ field.label }}</label>
+              <input
+                class="input"
+                [id]="'roi-lead-' + field.name"
+                [type]="field.type"
+                [formControlName]="field.name"
+                [attr.autocomplete]="field.auto"
+                [class.is-invalid]="controlError(ctrl)"
+              />
+              @if (controlError(ctrl); as msg) {
+                <span class="field__error">{{ msg }}</span>
+              }
+            </div>
+          }
+          <label class="checkbox">
+            <input type="checkbox" formControlName="gdpr_consent" />
+            <span>Súhlasím so spracovaním osobných údajov na účel zaslania ponuky.</span>
+          </label>
+          @if (controlError(leadForm.get('gdpr_consent')); as msg) {
+            <span class="field__error">{{ msg }}</span>
+          }
+          @if (leadError(); as err) {
+            <div class="alert alert--error" role="alert"><app-icon name="alert" />{{ err }}</div>
+          }
+          <div class="roi__form-actions">
+            <button type="submit" class="btn btn--primary" [disabled]="leadState() === 'submitting'">
+              @if (leadState() === 'submitting') {
+                <span class="spinner"></span> Odosielam…
+              } @else {
+                Odoslať odhad
+              }
+            </button>
+            <button type="button" class="btn btn--ghost-light" (click)="leadState.set('idle')">Zrušiť</button>
+          </div>
+        </form>
+      }
+    }
+  </div>
+</div>

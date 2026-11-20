@@ -1,0 +1,54 @@
+@let cs = study();
+<article class="cs" [attr.id]="cs.slug">
+  <header class="cs__head">
+    <div class="cs__tags">
+      <span class="pill pill--accent">{{ cs.client_industry }}</span>
+      @if (cs.client_descriptor && !compact()) {
+        <span class="cs__client">{{ cs.client_descriptor }}</span>
+      }
+    </div>
+    <h3 class="cs__title">{{ cs.title }}</h3>
+  </header>
+
+  <dl class="cs__metrics">
+    <div class="cs__metric">
+      <dt>Ušetrené hodiny / mesiac</dt>
+      <dd class="mono">{{ hours() }} h</dd>
+    </div>
+    <div class="cs__metric">
+      <dt>Zníženie nákladov</dt>
+      <dd class="mono">−{{ cs.cost_reduction_percent }} %</dd>
+    </div>
+    <div class="cs__metric">
+      <dt>Návratnosť</dt>
+      <dd class="mono">{{ payback() }} mes.</dd>
+    </div>
+  </dl>
+
+  @if (compact()) {
+    <p class="cs__summary">{{ cs.ai_solution_built }}</p>
+  } @else {
+    <div class="cs__compare">
+      <section class="cs__panel cs__panel--before">
+        <h4><span class="cs__dot"></span>Pred nasadením AI</h4>
+        <p>{{ cs.problem_before }}</p>
+      </section>
+      <section class="cs__panel cs__panel--after">
+        <h4><span class="cs__dot"></span>Po nasadení AI</h4>
+        <p>{{ cs.ai_solution_built }}</p>
+        @if (cs.result_after) {
+          <p class="cs__result">{{ cs.result_after }}</p>
+        }
+      </section>
+    </div>
+  }
+
+  <footer class="cs__foot">
+    <span class="cs__tools-label">Použité nástroje</span>
+    <ul class="pill-list">
+      @for (tool of cs.tools_used; track tool) {
+        <li class="pill">{{ tool }}</li>
+      }
+    </ul>
+  </footer>
+</article>

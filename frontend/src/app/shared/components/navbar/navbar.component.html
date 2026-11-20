@@ -1,0 +1,66 @@
+<header class="navbar">
+  <div class="navbar__inner container">
+    <a routerLink="/" class="navbar__brand" [attr.aria-label]="brand.name + ' – domov'">
+      <app-logo />
+    </a>
+
+    <nav class="navbar__nav" aria-label="Hlavná navigácia">
+      @for (link of links; track link.label) {
+        <a
+          class="navbar__link"
+          [routerLink]="link.path"
+          [fragment]="link.fragment"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="link.fragment ? fragmentMatch : prefixMatch"
+        >
+          {{ link.label }}
+        </a>
+      }
+    </nav>
+
+    <div class="navbar__actions">
+      <a routerLink="/kontakt" class="btn btn--primary btn--sm navbar__cta">
+        Bezplatný AI audit
+        <app-icon name="arrow-right" />
+      </a>
+      <button
+        type="button"
+        class="navbar__toggle"
+        [attr.aria-expanded]="isOpen()"
+        aria-controls="mobile-menu"
+        [attr.aria-label]="isOpen() ? 'Zavrieť menu' : 'Otvoriť menu'"
+        (click)="toggle()"
+      >
+        <app-icon [name]="isOpen() ? 'x' : 'menu'" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" [class.is-open]="isOpen()" id="mobile-menu" [attr.aria-hidden]="!isOpen()" [attr.inert]="isOpen() ? null : ''">
+  <div class="drawer__backdrop" (click)="close()"></div>
+  <nav class="drawer__panel" aria-label="Mobilná navigácia">
+    <ul class="drawer__list">
+      @for (link of links; track link.label; let i = $index) {
+        <li>
+          <a class="drawer__link" [routerLink]="link.path" [fragment]="link.fragment" (click)="close()">
+            <span class="drawer__index mono">0{{ i + 1 }}</span>
+            {{ link.label }}
+            <app-icon name="arrow-right" />
+          </a>
+        </li>
+      }
+    </ul>
+    <div class="drawer__footer">
+      <a routerLink="/kontakt" class="btn btn--primary btn--lg btn--block" (click)="close()">
+        Bezplatný AI audit
+      </a>
+      <a class="drawer__contact" [href]="'mailto:' + contact.email">
+        <app-icon name="mail" /> {{ contact.email }}
+      </a>
+      <a class="drawer__contact" [href]="'tel:' + contact.phoneHref">
+        <app-icon name="phone" /> {{ contact.phone }}
+      </a>
+    </div>
+  </nav>
+</div>

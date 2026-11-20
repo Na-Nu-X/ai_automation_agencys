@@ -1,0 +1,145 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.card {
+  @include card;
+  @include card-interactive;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  height: 100%;
+
+  &:focus-within {
+    border-color: var(--color-accent);
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+  }
+
+  &__category {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-accent-hover);
+
+    app-icon {
+      width: 28px;
+      height: 28px;
+      padding: 5px;
+      border-radius: $radius-sm;
+      background: var(--color-accent-soft);
+    }
+  }
+
+  &__featured {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-pill;
+    padding: 1px 8px;
+  }
+
+  &__title {
+    font-size: 1.15rem;
+    line-height: 1.3;
+  }
+
+  &__link {
+    color: var(--color-text);
+
+    // Stretched link: the whole card is clickable while keeping one accessible link.
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
+
+    &:hover {
+      color: var(--color-text);
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  &__desc {
+    color: var(--color-text-secondary);
+    font-size: 0.925rem;
+    line-height: 1.6;
+  }
+
+  &__saving {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    align-self: flex-start;
+    padding: 6px 10px;
+    border-radius: $radius-sm;
+    background: var(--color-success-soft);
+    color: var(--color-success);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+
+    app-icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &__foot {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: $space-4;
+    margin-top: auto;
+    padding-top: $space-4;
+    border-top: 1px solid var(--color-border);
+  }
+
+  &__meta {
+    display: flex;
+    gap: $space-5;
+    margin: 0;
+
+    dt {
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    dd {
+      margin: 2px 0 0;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-text);
+    }
+  }
+
+  .link-arrow {
+    flex-shrink: 0;
+    color: var(--color-accent);
+    font-size: 0.85rem;
+  }
+
+  &:hover .link-arrow app-icon {
+    transform: translateX(3px);
+  }
+}
