@@ -40,8 +40,11 @@ export function controlError(control: AbstractControl | null): string | null {
   if (!control || !control.errors || !(control.touched || control.dirty)) return null;
   const e = control.errors;
   if (e['server']) return e['server'] as string;
+  // Validators.requiredTrue reports its failure under the `required` key.
+  if (e['required'] && typeof control.value === 'boolean') {
+    return 'Pre odoslanie je potrebný súhlas so spracovaním osobných údajov.';
+  }
   if (e['required']) return 'Toto pole je povinné.';
-  if (e['requiredTrue']) return 'Pre odoslanie je potrebný súhlas so spracovaním osobných údajov.';
   if (e['email']) return 'Zadajte platnú e-mailovú adresu.';
   if (e['minlength']) return `Zadajte aspoň ${e['minlength'].requiredLength} znaky.`;
   if (e['maxlength']) return `Maximálna dĺžka je ${e['maxlength'].requiredLength} znakov.`;
