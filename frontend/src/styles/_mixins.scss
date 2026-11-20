@@ -1,0 +1,90 @@
+@use 'sass:map';
+@use 'variables' as *;
+
+/// Mobile-first media query: styles apply from the given breakpoint upwards.
+@mixin up($name) {
+  $value: map.get($breakpoints, $name);
+  @if not $value {
+    @error "Unknown breakpoint `#{$name}`.";
+  }
+  @media (min-width: $value) {
+    @content;
+  }
+}
+
+/// Styles apply below the given breakpoint.
+@mixin down($name) {
+  $value: map.get($breakpoints, $name);
+  @media (max-width: ($value - 0.02px)) {
+    @content;
+  }
+}
+
+@mixin container {
+  width: 100%;
+  max-width: $container-max;
+  margin-inline: auto;
+  padding-inline: $container-gutter;
+
+  @include up(md) {
+    padding-inline: $space-8;
+  }
+}
+
+@mixin focus-ring($offset: 2px) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: $offset;
+}
+
+@mixin card($padding: $space-6) {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-lg;
+  padding: $padding;
+}
+
+/// Card that lifts its border on hover – no heavy shadows.
+@mixin card-interactive {
+  transition:
+    border-color $duration-base $ease-out,
+    box-shadow $duration-base $ease-out,
+    transform $duration-base $ease-out;
+
+  &:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: 0 1px 0 var(--color-border), 0 12px 32px -18px rgb(15 23 42 / 0.25);
+    transform: translateY(-2px);
+  }
+}
+
+/// 1px architectural grid backdrop.
+@mixin grid-backdrop($color: rgb(15 23 42 / 0.05), $size: 48px) {
+  background-image:
+    linear-gradient(to right, $color 1px, transparent 1px),
+    linear-gradient(to bottom, $color 1px, transparent 1px);
+  background-size: $size $size;
+}
+
+@mixin mono-numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
